@@ -3,7 +3,12 @@ session_start();
 include("connection.php");
 error_reporting(E_ALL); 
 ini_set('display_errors', 1);
-$id=$_SESSION['id'];
+if (isset($_SESSION['id'])) {
+    $new_id = $_SESSION['id'];
+    echo 'session id set successfully'.$new_id.'';
+} else {
+    echo "Session ID is missing. Please log in again.";
+}
 $first_nameErr=$last_nameErr=$emailErr=$phoneErr=$birthErr=$genderErr=$gv_idErr=$addressErr=$stateErr=$fileErr=$cityErr=$postalErr="";
 
 $first_name=$last_name=$email=$phone=$birth_date=$gender=$gv_id=$address=$state=$city=$postal="";
@@ -58,11 +63,27 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
 	  {
    		 $emailErr = "Email is required";
             $signal=false;
-  	  } 
+  	  }
+       else if(isset($_POST["submit"]))
+        {
+            $user_email=$_POST['email'];
+            $email_query="select * from VoterRegistration where email='$user_email'";
+            $email_result=mysqli_query($link,$email_query);
+            if(!$email_result)
+            {
+                die("connection failed");
+            }
+            else
+            {
+                $email_result_rows=mysqli_num_rows($email_result);
+                if($email_result_rows> 0)
+                {
+                    $emailErr= "Email address already exist";
+                    header("Location:index.php?update_email_message='The email address is already exist can not Register with same Email'");
+                }
 
-      
-
-      
+            }
+        } 
   	  else 
   	  {
     		$email = test_input($_POST["email"]); 
@@ -264,12 +285,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
     if (!in_array($file['type'], $allowed_types)) {
         $fileErr = "Only PDF, JPEG, or JPG files are allowed.";
     } else {
-       
-        $upload_dir = 'uploads/';  
-        $file_name = basename($file['name']);
-        $target_file = $upload_dir . $file_name;
-
-        
+         $email_result_rows=mysqli_num_rows($email_result);
         if (!file_exists($target_file)) {
             $fileErr = "Sorry, the file already exists.";
         } else {

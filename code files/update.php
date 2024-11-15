@@ -6,7 +6,6 @@ if (isset($_GET["id"])) {
     $id = $_GET['id'];
 
     $_SESSION['id']= $id;
-    echo $_SESSION['id'];
     $query = "select * from VoterRegistration where `id`='$id'";
 
     $result = mysqli_query($link, $query);

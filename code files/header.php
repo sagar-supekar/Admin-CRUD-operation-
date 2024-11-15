@@ -110,6 +110,15 @@ else if (isset($_GET["update_message"])) {
             </div>
           </div>";
 }
+else if (isset($_GET["update_email_message"])) {
+    $msg = htmlspecialchars($_GET["update_email_message"]);
+    echo "<div class='alert-container'>
+            <div class='alert alert-danger alert-dismissible fade show' role='alert'>
+                " . $msg . "
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+            </div>
+          </div>";
+}
 ?>
 
 

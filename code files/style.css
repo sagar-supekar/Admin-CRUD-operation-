@@ -1,0 +1,191 @@
+
+*{
+    box-sizing: border-box;
+}
+body{
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.main{
+    max-width:600px ;
+    margin:0 auto;
+    background:white;
+    padding:20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+h1{
+    text-align: center;
+    color:#333;
+}
+
+.input-box{
+    margin-bottom: 15px;
+}
+
+.input-box label{
+    display: block;
+    margin-bottom: 5px;
+    color:#060606;
+    
+}
+
+.input-box input,
+.select-box select,
+textarea{
+    width:100%;
+    padding: 10px;
+    border:1px solid #ccc; 
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+}
+
+
+.column{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0px;
+    margin-top:10px;
+    gap: 2em;
+}
+.column  .input-box{
+    flex:1;
+    margin-right: 5px;
+}
+
+.gender{
+    padding-top: 0;
+    margin-bottom: 0px;
+}
+.gender label{
+    margin-right: 15px;
+    color:#060606;
+}
+/* 
+.ID-proof {
+    display: flex;
+    margin-bottom: 0px;
+}
+
+.ID-proof input {
+    margin-right: 5px;
+}
+
+
+.ID-proof-data{
+    width:50%;
+    padding:10px;
+    margin:20px
+} */
+
+#state{
+    position: relative;
+    bottom: 10px;
+}
+.ID-proof {
+    display: flex;
+    margin-bottom: 10px; 
+}
+
+.checkbox-container {
+    display: flex;
+    flex-direction: column; 
+    margin-top: 49px;
+
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: 5px; 
+}
+
+.ID-proof input {
+    margin-top: 10px;
+}
+
+.address {
+    margin-bottom: 15px;
+}
+
+button {
+    /* width: 20%; */
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #193005;
+}
+
+#btn-reset:hover {
+    background-color: #1b150b;
+}
+#upload:hover{
+    background-color: #aaa296;
+}
+
+#button
+{
+    display: flex;
+    margin:2px;
+    gap:2em
+}
+#btn-reset{
+    background-color: #555;
+}
+.select-box label{
+    color:#060606;
+}
+.select-box{
+    width: 256px;
+}
+
+.gv-proof{
+    position: relative;
+    bottom:33px;
+}
+
+/*  styling for pop up box */
+.popup {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,
+            0,
+            0,
+            0.4);
+    display: none;
+}
+
+.popup-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888888;
+    width: 30%;
+    font-weight: bolder;
+}
+
+.popup-content button {
+    display: block;
+    margin: 0 auto;
+}
+
+.show {
+    display: block;
+}

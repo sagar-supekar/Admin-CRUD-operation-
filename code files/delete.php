@@ -1,0 +1,22 @@
+<?php
+
+include("connection.php");
+
+if(isset($_GET["id"]))
+{
+    $id = $_GET["id"];
+   
+    $query="delete from VoterRegistration where id='$id'";
+
+    $result = mysqli_query($link,$query);
+
+    if(!$result)
+    {
+          die("connection failed");
+    }
+    else
+    {
+        header("Location: index.php?delete_message=" . urlencode('One row deleted successfully'));
+    }
+}
+?>

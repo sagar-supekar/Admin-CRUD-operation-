@@ -238,7 +238,7 @@ if (isset($_GET["id"])) {
 
             <!-- Back Button -->
             <div id="button">
-                <a href="index.php" class="button-link">
+                <a href="admin_home.php" class="button-link">
                     <button type="button" id="btn">Back to Home</button>
                 </a>
             </div>

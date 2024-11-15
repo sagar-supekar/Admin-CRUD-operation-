@@ -37,7 +37,6 @@ include("header.php");
                 <th>Mobile Number</th>
                 <th>Birth Date</th>
                 <th>Gender</th>
-                <th>GV Proof</th>
                 <th>Update</th>
                 <th>Delete</th>
                 <th>View</th>
@@ -66,7 +65,6 @@ include("header.php");
                     <td><?php echo $row['mobile_number']; ?></td>
                     <td><?php echo $row['birth_date']; ?></td>
                     <td><?php echo $row['gender']; ?></td>
-                    <td><?php echo $row['gv_proof']; ?></td>
                     <td><a href="update.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-success">Update</a></td>
                     <td><a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<?php echo $row['id']; ?>">Delete</a></td>
                     <td><a href="view.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-primary">view</a></td>

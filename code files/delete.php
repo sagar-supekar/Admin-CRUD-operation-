@@ -16,7 +16,7 @@ if(isset($_GET["id"]))
     }
     else
     {
-        header("Location: index.php?delete_message=" . urlencode('One row deleted successfully'));
+        header("Location: admin_home.php?delete_message=" . urlencode('One row deleted successfully'));
     }
 }
 ?>

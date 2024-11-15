@@ -75,7 +75,7 @@ if (isset($_POST['submit'])) {
     if (!$result) {
         die("Update failed: ");
     } else {
-        header("Location:index.php?success_message=" . urlencode('Record Update successfully'));
+        header("Location:admin_home.php?success_message=" . urlencode('Record Update successfully'));
     }
 }
 ?>
@@ -93,7 +93,9 @@ if (isset($_POST['submit'])) {
 <body>
     <div class="main">
         <form class="form" method="POST" action="update.php" enctype="multipart/form-data">
-            
+        <div class="d-flex justify-content-start">
+            <a href="admin_home.php" class="btn-close" aria-label="Close" style="font-size: 24px;text-decoration:none;"></a>
+        </div>
             <h1>Voter Registration Form</h1>
             <div class="input-box">
                 <label>First Name</label>

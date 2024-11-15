@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 if (isset($_SESSION['id'])) {
     $new_id = $_SESSION['id'];
-    echo 'session id set successfully'.$new_id.'';
+    //echo 'session id set successfully'.$new_id.'';
 } else {
     echo "Session ID is missing. Please log in again.";
 }
@@ -79,7 +79,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
                 if($email_result_rows> 0)
                 {
                     $emailErr= "Email address already exist";
-                    header("Location:index.php?update_email_message='The email address is already exist can not Register with same Email'");
+                    header("Location:admin_home.php?update_email_message='The email address is already exist can not Register with same Email'");
                 }
 
             }
@@ -281,7 +281,8 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
  if (isset($_FILES['filename']) && $_FILES['filename']['error'] == 0) {
     $file = $_FILES['filename'];
 
-   
+    $target_dir = "uploads/";  // Make sure this is a valid directory on your server
+    $target_file = $target_dir . basename($_FILES["filename"]["name"]);
     if (!in_array($file['type'], $allowed_types)) {
         $fileErr = "Only PDF, JPEG, or JPG files are allowed.";
     } else {
@@ -302,7 +303,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
 
                 if (mysqli_query($link, $sql)) {
                     $successMessage = '<div class="alert alert-success" style="background-color:green;color:white;width:100%;height:50px;padding:14px 20px;">Registration successful with file upload!</div>';
-                    header("Location:index.php?update_message=" . urlencode('New Record added successfully'));
+                    header("Location:admin_home.php?update_message=" . urlencode('New Record added successfully'));
                 } else {
                     $signal=false;
                     $fileErr = "Failed to submit data to the database: " . mysqli_error($link);
@@ -326,7 +327,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
 
 // if(!$signal) {
 //     $_SESSION['error_message'] = "There are errors in the form. Please check again!";
-//    // header("Location: index.php");  
+//    // header("Location: admin_home.php");  
 //     exit();
 // } 
 
@@ -352,6 +353,9 @@ function test_input($data) {
 
 <body>
     <div class="main">
+        <div class="d-flex justify-content-start">
+            <a href="admin_home.php" class="btn-close" aria-label="Close" style="font-size: 24px;text-decoration:none;">X</a>
+        </div>
        <form class="form" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
             <div class="error-alert"><?php echo $successMessage ?></div>
             <h1>Voter Registration Form</h1>

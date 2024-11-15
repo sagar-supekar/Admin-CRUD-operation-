@@ -10,62 +10,109 @@
     <!-- Custom CSS -->
     <style>
         .admin-heading {
-            background-color: #343a40; /* Dark background for heading */
+            background-color: #343a40; 
             color: white;
-            padding: 20px 0;  /* Vertical padding */
-            width: 100%; /* Ensure full width */
+            padding: 20px 0; 
+            width: 100%; 
           
         }
 
         .table-responsive {
-            width: 100%; /* Ensure table is full width */
+            width: 100%; 
            
            
         }
 
         table {
-            margin: 0 auto; /* Center the table */
-            border-collapse: collapse; /* Remove double borders */
+            margin: 0 auto; 
+            border-collapse: collapse; 
         }
 
         th, td {
-            padding: 15px; /* Add padding inside cells */
-            text-align: center; /* Center align text */
+            padding: 15px; 
+            text-align: center; 
         }
 
         th {
-            background-color: #222; /* Dark background for the header */
+            background-color: #222;
             color: white;
         }
 
         tbody tr:nth-child(even) {
-            background-color: #444; /* Dark gray for even rows */
+            background-color: white; 
         }
 
         tbody tr:nth-child(odd) {
-            background-color: #333; /* Slightly lighter gray for odd rows */
+            background-color: white; 
         }
 
         tbody tr:hover {
-            background-color: #555; /* Hover effect */
-            color: white; /* White text on hover */
+            background-color: gray; 
+            color: black; 
         }
 
         .container-fluid {
-            margin: 0 20px; /* Add margin from all sides */
+            margin: 0 20px; 
         }
 
         .table-bordered {
-            border: 1px solid #ddd; /* Add border around the table */
+            border: 1px solid #ddd;
         }
 
         .table-bordered th, .table-bordered td {
-            border: 1px solid #ddd; /* Light borders for cells */
+            border: 1px solid #ddd; 
         }
-        
+    
+.alert-container {
+    width: 50%; 
+    position: fixed; 
+    top: 10px; 
+    left: 50%;
+    transform: translateX(-50%); 
+    z-index: 1050; 
+    max-width: 600px; 
+    min-width: 300px;
+    margin: 0 10px; 
+    border-radius: 5px; 
+}
+
+body {
+    padding-top: 80px; /* Make sure there is enough space for the alert */
+}
+
     </style>
 </head>
 <body>
+<?php
+if (isset($_GET['success_message'])) {
+    $msg = htmlspecialchars($_GET['success_message']);
+    echo "<div class='alert-container'>
+            <div class='alert alert-success alert-dismissible fade show' role='alert'>
+                " . $msg . "
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+            </div>
+          </div>";
+} else if (isset($_GET["delete_message"])) {
+    $msg = htmlspecialchars($_GET["delete_message"]);
+    echo "<div class='alert-container'>
+            <div class='alert alert-danger alert-dismissible fade show' role='alert'>
+                " . $msg . "
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+            </div>
+          </div>";
+}
+else if (isset($_GET["update_message"])) {
+    $msg = htmlspecialchars($_GET["update_message"]);
+    echo "<div class='alert-container'>
+            <div class='alert alert-success alert-dismissible fade show' role='alert'>
+                " . $msg . "
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+            </div>
+          </div>";
+}
+?>
+
+
 
     <!-- Main container with full width -->
 

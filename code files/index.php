@@ -22,7 +22,7 @@ include("header.php");
           echo "".$total_records."";
     }
     ?> </h2>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">ADD NEW USER</button>
+   <a href="form.php" class="btn btn-success">Add New User</a>
 </div>
 
 <!-- Table -->
@@ -30,32 +30,36 @@ include("header.php");
     <table class="table table-bordered table-striped table-white">
         <thead class="thead-dark">
             <tr>
-                <th>ID</th>
+                <th>Sr No</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
                 <th>Mobile Number</th>
-                <th>Birthdate</th>
+                <th>Birth Date</th>
                 <th>Gender</th>
                 <th>GV Proof</th>
                 <th>Update</th>
                 <th>Delete</th>
+                <th>View</th>
             </tr>
         </thead>
         <tbody>
             <?php
             include("connection.php");
-
-            $query = "SELECT * FROM VoterRegistration";
+            $query = "SELECT * FROM VoterRegistration ORDER BY id DESC";
             $result = mysqli_query($link, $query);
             if (!$result) {
                 die("Connection failed: " . mysqli_error($link));
             }
+            else{
+                $count=1;
+            }
 
             while ($row = mysqli_fetch_array($result)) {
+                
             ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
+                    <td><?php echo $count++;?></td>
                     <td><?php echo $row['first_name']; ?></td>
                     <td><?php echo $row['last_name']; ?></td>
                     <td><?php echo $row['email']; ?></td>
@@ -64,48 +68,36 @@ include("header.php");
                     <td><?php echo $row['gender']; ?></td>
                     <td><?php echo $row['gv_proof']; ?></td>
                     <td><a href="update.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-success">Update</a></td>
-                    <td><a href="delete.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-danger">Delete</a></td>
+                    <td><a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<?php echo $row['id']; ?>">Delete</a></td>
+                    <td><a href="view.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-primary">view</a></td>
                 </tr>
             <?php
             }
             ?>
         </tbody>
     </table>
-    <?php
-    if (isset($_GET['success_message'])) {
-
-        $msg = htmlspecialchars($_GET['success_message']);
-        echo "<div class= 'alert alert-success'>" . $msg;
-    } else if (isset($_GET["delete_message"])) {
-        $msg = htmlspecialchars($_GET["delete_message"]);
-        echo "<div class= 'alert alert-danger'>" . $msg;
-    }
-
-    ?>
+    
 
 </div>
-
-
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <?php
-            include('form.php');
-            ?>
-
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Delete Record</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <h4 class="text-danger">Are you sure you want to delete this record?</h4>
+        <p>Please confirm your decision.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="#" id="deleteRecordLink" class="btn btn-danger">Delete</a>
+      </div>
     </div>
+  </div>
 </div>
-
-
 <?php
 
 

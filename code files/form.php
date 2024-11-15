@@ -1,8 +1,9 @@
 <?php
-// session_start();
+session_start();
+include("connection.php");
 error_reporting(E_ALL); 
 ini_set('display_errors', 1);
-
+$id=$_SESSION['id'];
 $first_nameErr=$last_nameErr=$emailErr=$phoneErr=$birthErr=$genderErr=$gv_idErr=$addressErr=$stateErr=$fileErr=$cityErr=$postalErr="";
 
 $first_name=$last_name=$email=$phone=$birth_date=$gender=$gv_id=$address=$state=$city=$postal="";
@@ -58,6 +59,10 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
    		 $emailErr = "Email is required";
             $signal=false;
   	  } 
+
+      
+
+      
   	  else 
   	  {
     		$email = test_input($_POST["email"]); 
@@ -265,7 +270,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
         $target_file = $upload_dir . $file_name;
 
         
-        if (file_exists($target_file)) {
+        if (!file_exists($target_file)) {
             $fileErr = "Sorry, the file already exists.";
         } else {
             
@@ -281,7 +286,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
 
                 if (mysqli_query($link, $sql)) {
                     $successMessage = '<div class="alert alert-success" style="background-color:green;color:white;width:100%;height:50px;padding:14px 20px;">Registration successful with file upload!</div>';
-                    header('Location:"index.php?update_message=" . urlencode("One row deleted successfully")');
+                    header("Location:index.php?update_message=" . urlencode('New Record added successfully'));
                 } else {
                     $signal=false;
                     $fileErr = "Failed to submit data to the database: " . mysqli_error($link);

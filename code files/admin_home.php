@@ -1,15 +1,20 @@
 <?php
 session_start();
+if (!isset($_SESSION['username'])) {
+  // If not logged in, redirect to sign-in page
+  header("Location: /Admin Panel/session.php");
+  exit();
+}
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include("header.php");
 ?>
-<!-- Heading with background color -->
+
 
 
 <div class="navbar">
-    <h2 clas="text">All Records  <?php
-    
+    <h2 class="text mx-3">All Records  <?php
+
     include("connection.php");
     $query="select count(*) as total_records from VoterRegistration";
     $result=mysqli_query($link,$query);
@@ -22,11 +27,11 @@ include("header.php");
           echo "".$total_records."";
     }
     ?> </h2>
-   <a href="form.php" class="btn btn-success">Add New User</a>
+   <a href="form.php" class="btn btn-success mx-3">Add New User</a>
 </div>
 
 <!-- Table -->
-<div class="table-responsive mb-5">
+<div class="table-responsive mb-5 mx-3 ">
     <table class="table table-bordered table-striped table-white">
         <thead class="thead-dark">
             <tr>

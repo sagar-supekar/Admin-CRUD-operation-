@@ -23,6 +23,7 @@ if (array_key_exists('email', $_POST) || array_key_exists('password', $_POST)) {
     //check validation for the admin user 
     if($username=="root" && $password== "root") 
     {   
+        $_SESSION['username'] = $username;
         header("Location:code files/admin_home.php");
     }
     else
@@ -39,7 +40,8 @@ if (array_key_exists('email', $_POST) || array_key_exists('password', $_POST)) {
         // Verify the password
         if (password_verify($password, $hash_password)) {
             $success = "<p>Login successful</p>";
-            $_SESSION['email'] = $username; // Store the email in the session
+            $_SESSION['username'] = $username; // Store the email in the session
+            print_r($_SESSION['username']);
             header("Location: welcome.php"); 
             exit();
         } else {

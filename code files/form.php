@@ -1,345 +1,208 @@
 <?php
 session_start();
+
+
 include("connection.php");
-error_reporting(E_ALL); 
+error_reporting(E_ALL);
 ini_set('display_errors', 1);
-if (isset($_SESSION['id'])) {
-    $new_id = $_SESSION['id'];
-    //echo 'session id set successfully'.$new_id.'';
-} else {
-    echo "Session ID is missing. Please log in again.";
-}
-$first_nameErr=$last_nameErr=$emailErr=$phoneErr=$birthErr=$genderErr=$gv_idErr=$addressErr=$stateErr=$fileErr=$cityErr=$postalErr="";
 
-$first_name=$last_name=$email=$phone=$birth_date=$gender=$gv_id=$address=$state=$city=$postal="";
-
-$successMessage="";
- // test_input function is used when there is some space, special character and forward or backward slash is available then it remove it and then send to server 
- 
-include("connection.php");
-
-$signal=true;
-if($_SERVER["REQUEST_METHOD"]=="POST")
-{
-	
-	// first name validation
-	if(empty ($_POST["first-name"]))
-	{
-		$first_nameErr="first name is required";
-        $signal=false;
-	}
-	else
-	{
-		$first_name=test_input($_POST["first-name"]);
-		// check only charcters and whitespaces are allowed in first name and last name
-		  if(!preg_match("/^[a-zA-Z-' ]*$/",$first_name)) 
-		   {
-     			 $first_nameErr= "Only letters and white space allowed";
-                  $signal=false;
-    	   }
-           
-	}
-	
-	//last name validation
-	if(empty ($_POST["last-name"]))
-	{
-		$last_nameErr="last name is required";
-        $signal=false;
-	}
-	else
-	{
-		
-		$last_name=test_input($_POST["last-name"]);
-		if(!preg_match("/^[a-zA-Z-' ]*$/",$last_name)) 
-		   {
-     			 $last_nameErr= "Only letters and white space allowed";
-                  $signal=false;
-    		   }
-	}
-	
-	// email validation
-	
-	  if (empty($_POST["email"])) 
-	  {
-   		 $emailErr = "Email is required";
-            $signal=false;
-  	  }
-       else if(isset($_POST["submit"]))
-        {
-            $user_email=$_POST['email'];
-            $email_query="select * from VoterRegistration where email='$user_email'";
-            $email_result=mysqli_query($link,$email_query);
-            if(!$email_result)
-            {
-                die("connection failed");
-            }
-            else
-            {
-                $email_result_rows=mysqli_num_rows($email_result);
-                if($email_result_rows> 0)
-                {
-                    $emailErr= "Email address already exist";
-                    header("Location:admin_home.php?update_email_message='The email address is already exist can not Register with same Email'");
-                }
-
-            }
-        } 
-  	  else 
-  	  {
-    		$email = test_input($_POST["email"]); 
-    		// check if e-mail address is well-formed
-    		if (filter_var($email, FILTER_VALIDATE_EMAIL)==false) 
-    		{
-     		 	$emailErr = "Invalid email format";
-                  $signal=false;
-    		}
-  	  }
-  	  
-  	  // phone number validatio
-  	  
-  	  if(empty ($_POST["phone-number"]))
-  	  {
-  	  	$phoneErr="phone number is required";
-        $signal=false;
-  	  }
-  	  else
-  	  {
-  	  	$phone=test_input($_POST["phone-number"]);
-  	  	
-  	  	if(!preg_match('/^[0-9]{10}$/',$phone))
-  	  	{
-  	  		$phoneErr="enter 10 digit phone number";
-  	  	}
-  	  }
-	
-	// birth date validation 
-	
-	$birth_date=$_POST["birth-date"];
-	
-	
-			
-			function isDate($string) 
-			{
-		   		 $inputDate = DateTime::createFromFormat('Y-m-d', $string);
-		    		if ($inputDate === false)
-		    		 {
-		        			return false;
-		   		 }
-		    
-		   		 $currentDate = new DateTime();
-		   		 if ($inputDate > $currentDate) 
-		   		 {
-		       			 return false;
-		    		 }
-		    
-		    		$age = $currentDate->diff($inputDate)->y;
-		  		  if ($age < 18) 
-		  		  {
-		       			 return false;
-		   		  }
-
-		    	return true;
-		    	
-		        }
-			
-
-	
-	if(!isDate($birth_date))
-	{
-		$birthErr="age should not less than 18 or birth date not allowed in future";
-	}
-	
-	// gender filed is required
-	
-	
-	  if (empty($_POST["gender"])) 
-	  {
-	    	$genderErr = "Gender is required";
-	  } 
-	  else 
-	  {
-	    	$gender = test_input($_POST["gender"]);
-	  }
-		
-	// checkbox validation
-	
-	 if(!isset($_POST['gv-card']))
-   	 {
-        		$gv_idErr="please select at least one id proof";
-   	 }
-   	 
-   	 // file validation 
-   	 
-   	 if(isset($_FILES['filename']))
-   	 {
-		$file=$_FILES['filename'];
-		$allowed_types=['application/pdf','image/jpeg','image/jpg'];
-		
-		if($file['error']==0)
-		{
-			if(!in_array($file['type'],$allowed_types))
-			{
-				$fileErr="only JPEG/JPG and PDF files are allowed";
-			}
-		}
-		else
-		{
-			$fileErr="please upload valid file";
-		}	 	
-   	 }
-   	 else
-   	 {
-   	 	$fileErr="please upload a file";
-   	 }
-   	 
-   	 // address field validation
-   	 
-   	 if(empty($_POST['address']))
-   	 {
-   	 	$addressErr="address field is require";
-   	 }
-   	 
-   	 // state field validation
-   	
-   	$state=$_POST['state'];
-   	
-	if ($state == 'Select State' || empty($state)) {
-   	 $stateErr = "Please select a  state";
-	}
-		 
-   		
-   	 //city validatiion
-   	 
-   	 if(empty ($_POST["city"]))
-	{
-		$cityErr="city is required";
-	}
-	else
-	{
-		
-		$city=test_input($_POST["last-name"]);
-		if(!preg_match("/^[a-zA-Z-' ]*$/",$city)) 
-		   {
-     			 $cityErr= "Only letters and white space allowed";
-    		   }
-	}
-	
-	
-	//postal code validation
-	
-	if(empty ($_POST["postal-code"]))
-  	  {
-  	  	$postalErr="postal code is required";
-  	  }
-  	  else
-  	  {
-  	  	$postal=test_input($_POST["postal-code"]);
-  	  	
-  	  	if(!preg_match('/^[0-9]{6}$/',$postal))
-  	  	{
-  	  		$postalErr="enter 6 digit postal code";
-  	  	}
-  	  }
-  	  
-  	 //echo $_POST['address'];
-       if (isset($_POST['gv-card']) && !empty($_POST['gv-card'])) {
-        $gv_ids = $_POST['gv-card'];  // This is an array of selected values
-        $gv_id = implode(", ", $gv_ids);  // Convert array to comma-separated string
-    } else {
-        $gv_idErr = "Please select at least one ID proof.";
-    }
-
-    
-    // if (empty($first_nameErr) && empty($last_nameErr) && empty($emailErr) && empty($phoneErr) && empty($birthErr) && empty($genderErr)  && empty($gv_idErr) && empty($addressErr) && empty($stateErr) && empty($fileErr) && empty($cityErr) && empty($postalErr)) 
-  	// {   
-    //     $address = mysqli_real_escape_string($link, $_POST['address']);
-    //     $sql = "INSERT INTO VoterRegistration (first_name, last_name, email, mobile_number, birth_date, gender, gv_proof, address, state, city, postal_code)
-    //     VALUES ('$first_name', '$last_name', '$email', '$phone', '$birth_date', '$gender', '$gv_id', '$address', '$state', '$city', '$postal')";
-    //     $quey="insert into VoterRegistration (address) values ('Navi mumbai maharashtra')";
-    //     $result=mysqli_query($link,$sql);
-    //     echo $sql;
-    
-    //     if($result)
-    //     {   
-    //             // $email=mysqli_real_escape_string($link,$email);
-    //             // $address_query="update VoterRegistration set address='$address' where email='$email'";
-    //             // $result=mysqli_query($link,$address_query);
-    //             // if($result)
-    //             // {
-    //                 $successMessage = '<div class="alert alert-success" style="background-color:green;color:white;width:100%;height:50px;padding:14px 20px;">Congratulations for your successful Registration !!!!</div>';
-    //             //}
-    //     }
-    //     else{
-    //         $successMessage = '<div class="alert alert-danger" style="background-color:green;color:white;width:100%;height:50px;padding:14px 20px;">fail to submit</div>';
-    //     }
-    // }
-
-    $allowed_types = ['application/pdf', 'image/jpeg', 'image/jpg'];
-    $fileErr = "";
-
- // Check if file is uploaded
- if (isset($_FILES['filename']) && $_FILES['filename']['error'] == 0) {
-    $file = $_FILES['filename'];
-
-    $target_dir = "uploads/";  // Make sure this is a valid directory on your server
-    $target_file = $target_dir . basename($_FILES["filename"]["name"]);
-    if (!in_array($file['type'], $allowed_types)) {
-        $fileErr = "Only PDF, JPEG, or JPG files are allowed.";
-    } else {
-         $email_result_rows=mysqli_num_rows($email_result);
-        if (!file_exists($target_file)) {
-            $fileErr = "Sorry, the file already exists.";
-        } else {
-            
-            if (move_uploaded_file($file['tmp_name'], $target_file)) {
-                
-
-                
-                $address = mysqli_real_escape_string($link, $_POST['address']);
-
-               
-                $sql = "INSERT INTO VoterRegistration (first_name, last_name, email, mobile_number, birth_date, gender, gv_proof, address, state, city, postal_code, file_path)
-                        VALUES ('$first_name', '$last_name', '$email', '$phone', '$birth_date', '$gender', '$gv_id', '$address', '$state', '$city', '$postal', '$target_file')";
-
-                if (mysqli_query($link, $sql)) {
-                    $successMessage = '<div class="alert alert-success" style="background-color:green;color:white;width:100%;height:50px;padding:14px 20px;">Registration successful with file upload!</div>';
-                    header("Location:admin_home.php?update_message=" . urlencode('New Record added successfully'));
-                } else {
-                    $signal=false;
-                    $fileErr = "Failed to submit data to the database: " . mysqli_error($link);
-                }
-            } else {
-                $signal=false;
-                $fileErr = "Sorry, there was an error uploading your file.";
-            }
-        }
-    }
-} else {
-    if ($_FILES['filename']['error'] != 0) {
-        $signal=false;
-        $fileErr = "No file uploaded or there was an error uploading the file.";
-    }
-}
-
-   
-  	  
-}
-
-// if(!$signal) {
-//     $_SESSION['error_message'] = "There are errors in the form. Please check again!";
-//    // header("Location: admin_home.php");  
-//     exit();
-// } 
-
-
+// Define error messages and form variables
+$first_nameErr = $last_nameErr = $emailErr = $phoneErr = $birthErr = $genderErr = $gv_idErr = $addressErr = $stateErr = $fileErr = $cityErr = $postalErr = "";
+$first_name = $last_name = $email = $phone = $birth_date = $gender = $gv_id = $address = $state = $city = $postal = "";
+$successMessage = "";
 
 function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
 }
+
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $signal = true;
+
+    // Check if email already exists
+   
+
+    // Validate form fields
+    // First name validation
+    if (empty($_POST["first-name"])) {
+        $first_nameErr = "First name is required";
+        $signal = false;
+    } else {
+        $first_name = test_input($_POST["first-name"]);
+        if (!preg_match("/^[a-zA-Z-' ]*$/", $first_name)) {
+            $first_nameErr = "Only letters and white space allowed";
+            $signal = false;
+        }
+    }
+
+    // Last name validation
+    if (empty($_POST["last-name"])) {
+        $last_nameErr = "Last name is required";
+        $signal = false;
+    } else {
+        $last_name = test_input($_POST["last-name"]);
+        if (!preg_match("/^[a-zA-Z-' ]*$/", $last_name)) {
+            $last_nameErr = "Only letters and white space allowed";
+            $signal = false;
+        }
+    }
+
+    // Email validation
+    if (empty($_POST["email"])) {
+        $emailErr = "Email is required";
+        $signal = false;
+    } else {
+        $email = test_input($_POST["email"]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Invalid email format";
+            $signal = false;
+        }
+    }
+
+    // Phone number validation
+    if (empty($_POST["phone-number"])) {
+        $phoneErr = "Phone number is required";
+        $signal = false;
+    } else {
+        $phone = test_input($_POST["phone-number"]);
+        if (!preg_match('/^[0-9]{10}$/', $phone)) {
+            $phoneErr = "Enter 10 digit phone number";
+            $signal = false;
+        }
+    }
+
+    // Birth date validation
+    $birth_date = $_POST["birth-date"];
+    function isDate($string) {
+        $inputDate = DateTime::createFromFormat('Y-m-d', $string);
+        if ($inputDate === false) {
+            return false;
+        }
+        $currentDate = new DateTime();
+        if ($inputDate > $currentDate) {
+            return false;
+        }
+        $age = $currentDate->diff($inputDate)->y;
+        if ($age < 18) {
+            return false;
+        }
+        return true;
+    }
+    if (!isDate($birth_date)) {
+        $birthErr = "Age should not be less than 18 or birth date not allowed in the future.";
+        $signal = false;
+    }
+
+    // Gender validation
+    if (empty($_POST["gender"])) {
+        $genderErr = "Gender is required";
+        $signal = false;
+    } else {
+        $gender = test_input($_POST["gender"]);
+    }
+
+    // ID Proof validation (checkbox)
+    if (!isset($_POST['gv-card'])) {
+        $gv_idErr = "Please select at least one ID proof";
+        $signal = false;
+    } else {
+        $gv_ids = $_POST['gv-card'];
+        $gv_id = implode(", ", $gv_ids); // Convert array to comma-separated string
+    }
+
+    // File upload validation
+    if (isset($_FILES['filename'])) {
+        $file = $_FILES['filename'];
+        $allowed_types = ['application/pdf', 'image/jpeg', 'image/jpg'];
+        if ($file['error'] == 0) {
+            if (!in_array($file['type'], $allowed_types)) {
+                $fileErr = "Only JPEG/JPG and PDF files are allowed.";
+                $signal = false;
+            }
+        } else {
+            $fileErr = "Please upload a valid file.";
+            $signal = false;
+        }
+    } else {
+        $fileErr = "Please upload a file.";
+        $signal = false;
+    }
+
+    // Address validation
+    if (empty($_POST['address'])) {
+        $addressErr = "Address field is required";
+        $signal = false;
+    }
+
+    // State validation
+    $state = $_POST['state'];
+    if ($state == 'Select State' || empty($state)) {
+        $stateErr = "Please select a state";
+        $signal = false;
+    }
+
+    // City validation
+    if (empty($_POST["city"])) {
+        $cityErr = "City is required";
+        $signal = false;
+    } else {
+        $city = test_input($_POST["city"]);
+        if (!preg_match("/^[a-zA-Z-' ]*$/", $city)) {
+            $cityErr = "Only letters and white space allowed";
+            $signal = false;
+        }
+    }
+
+    // Postal code validation
+    if (empty($_POST["postal-code"])) {
+        $postalErr = "Postal code is required";
+        $signal = false;
+    } else {
+        $postal = test_input($_POST["postal-code"]);
+        if (!preg_match('/^[0-9]{6}$/', $postal)) {
+            $postalErr = "Enter a 6-digit postal code";
+            $signal = false;
+        }
+    }
+    if ($signal) {
+        $user_email = $_POST['email'];
+        $email_query = "SELECT * FROM VoterRegistration WHERE email = '$user_email'";
+        $email_result = mysqli_query($link, $email_query);
+
+        if ($email_result && mysqli_num_rows($email_result) > 0) {
+            $emailErr = "Email address already exists. Please use a different email.";
+            $signal = false;
+        }
+    }
+    if ($signal) {
+        $target_dir = "uploads/";
+        $target_file = $target_dir . basename($file["name"]);
+        if (move_uploaded_file($file['tmp_name'], $target_file)) {
+            $address = mysqli_real_escape_string($link, $_POST['address']);
+            $sql = "INSERT INTO VoterRegistration (first_name, last_name, email, mobile_number, birth_date, gender, gv_proof, address, state, city, postal_code, file_path)
+                    VALUES ('$first_name', '$last_name', '$email', '$phone', '$birth_date', '$gender', '$gv_id', '$address', '$state', '$city', '$postal', '$target_file')";
+            if (mysqli_query($link, $sql)) {
+                $successMessage = "Registration successful!";   
+                header("Location: admin_home.php?update_message=" . urlencode('New record added successfully'));
+                exit();
+            } else {
+                $fileErr = "Failed to submit data to the database: " . mysqli_error($link);
+            }
+        } else {
+            $fileErr = "Sorry, there was an error uploading your file.";
+        }
+    } else {
+        // If any error exists, redirect back with errors
+        header("Location:form.php?email_message=" . urlencode('Email already exists '));
+        exit();
+    }
+}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -376,9 +239,9 @@ function test_input($data) {
 
             <div class="input-box">
                 <label>Email Address</label>
-                <input type="text" placeholder="Enter email address" id="email" name="email"   />
+                <input type="text" placeholder="Enter email address" name="email"  />
                 <small id="email-error"></small>
-                 <span class="error" style="color:red;"><?php echo $emailErr;?></span>
+                <span class="error" style="color:red;"><?php echo  isset($_GET['email_message']) ?$_GET['email_message']:''; ?></span>
             </div>
 
 

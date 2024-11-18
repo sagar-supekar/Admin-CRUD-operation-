@@ -217,7 +217,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="main">
         <div class="d-flex justify-content-start">
-            <a href="admin_home.php" class="btn-close" aria-label="Close" style="font-size: 24px;text-decoration:none;">X</a>
+        <a href="<?php echo $_SESSION['username'] == 'root' ? 'admin_home.php' : '/Admin Panel/welcome.php'; ?>" 
+   class="btn-close" 
+   aria-label="Close" 
+   style="font-size: 24px; text-decoration: none;">X</a>
+
         </div>
        <form class="form" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
             <div class="error-alert"><?php echo $successMessage ?></div>

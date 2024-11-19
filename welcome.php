@@ -1,5 +1,38 @@
+<?php
+session_start();
+include("code files/connection.php");
+if (!isset($_SESSION['username'])) {
+    // If not logged in, redirect to sign-in page
+    header("Location: /Admin Panel/session.php");
+    exit();
+} else {
+    echo "session id set successfully" . $_SESSION['login_id'];
+}
+
+?>
+
+<!-- CHECK SESSION IS SET OR NOT -->
+<?php
+
+if (isset($_SESSION['login_id'])) {
+    $login_id = $_SESSION['login_id'];
+
+    $query = "SELECT * FROM VoterRegistrationTable WHERE id = '$login_id'";
+    $result = mysqli_query($link, $query);
+
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $id_exists = true;
+    } else {
+        $id_exists = false;
+    }
+} else {
+    $id_exists = false;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,27 +42,33 @@
 
     <!-- Custom CSS for styling -->
     <style>
-        body, html {
+        body,
+        html {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 14px;
             line-height: 1.42857;
             height: 100%;
             margin: 0;
         }
+
         /* Center content vertically and horizontally */
         .welcome-container {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 60%; /* Adjusted height */
+            height: 60%;
+            /* Adjusted height */
             text-align: center;
-            background-image: url('images.jpeg'); /* Replace with your image URL */
-            background-size: cover;  /* Ensures the image covers the entire container */
+            background-image: url('images.jpeg');
+            /* Replace with your image URL */
+            background-size: cover;
+            /* Ensures the image covers the entire container */
             background-position: center;
-            color:black;  /* Centers the image */
+            color: black;
+            /* Centers the image */
         }
-        
+
         .welcome-container::before {
             content: '';
             position: absolute;
@@ -37,26 +76,30 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.4); /* Dark overlay with opacity */
-            z-index: 1; /* Makes sure the overlay is on top of the image, but below the text */
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
         }
 
         .welcome-text {
             font-size: 4rem;
             font-weight: bold;
-            color:white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Optional: Add a shadow for better visibility */
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
+
         /* Navbar styling */
         .navbar-custom {
-            background-color: #343a40; /* Dark background for navbar */
+            background-color: #343a40;
         }
+
         .navbar-custom .navbar-nav .nav-link {
-            color: #fff; /* White text for nav links */
+            color: #fff;
         }
+
         .navbar-custom .navbar-nav .nav-link:hover {
-            color: #ddd; /* Slight hover effect */
+            color: #ddd;
         }
+
         /* Section Cards */
         .info-card {
             background-color: #fff;
@@ -66,14 +109,17 @@
             text-align: center;
             margin: 20px 0;
         }
+
         .info-card h5 {
             color: #007bff;
             font-weight: bold;
         }
+
         .info-card p {
             font-size: 1rem;
             color: #555;
         }
+
         /* Footer styling */
         .footer {
             text-align: center;
@@ -84,6 +130,7 @@
             bottom: 0;
             width: 100%;
         }
+
         .cta-button {
             background-color: #007bff;
             color: white;
@@ -93,14 +140,17 @@
             text-decoration: none;
             margin-top: 20px;
         }
+
         .cta-button:hover {
             background-color: #0056b3;
         }
+
         /* Testimonials Section */
         .testimonial {
             background-color: #e9ecef;
             padding: 30px 0;
         }
+
         .testimonial-card {
             background-color: white;
             border-radius: 8px;
@@ -109,27 +159,33 @@
             padding: 20px;
             text-align: center;
         }
+
         .testimonial-card p {
             font-style: italic;
         }
+
         .testimonial-card h5 {
             font-weight: bold;
         }
+
         /* FAQ Section */
         .faq-section {
             background-color: #f1f1f1;
             padding: 40px 0;
         }
+
         .faq-question {
             font-weight: bold;
             color: #007bff;
         }
+
         .faq-answer {
             padding-left: 20px;
             color: #555;
         }
     </style>
 </head>
+
 <body>
 
     <!-- Navbar with Home, Show Form, Logout -->
@@ -142,13 +198,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="welcome.php">Home</a>
+                        <?php if ($id_exists): ?>
+                            <a class="nav-link" href="/Admin Panel/register_user_view.php?login_id=<?php echo $_SESSION['login_id']; ?>">Show Form</a>
+                        <?php else: ?>
+                            <a class="nav-link" href="#" onclick="alert('Please fill out the form.');">Show Form</a>
+                        <?php endif; ?>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="code files/view.php">Show Form</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="session.php">Logout</a>
+                        <a class="nav-link" href="logout.php">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -257,4 +315,5 @@
     <!-- Bootstrap JS (optional, for components that require JavaScript) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

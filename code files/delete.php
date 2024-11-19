@@ -6,7 +6,7 @@ if(isset($_GET["id"]))
 {
     $id = $_GET["id"];
    
-    $query="delete from VoterRegistration where id='$id'";
+    $query="delete from VoterRegistrationTable where id='$id'";
 
     $result = mysqli_query($link,$query);
 

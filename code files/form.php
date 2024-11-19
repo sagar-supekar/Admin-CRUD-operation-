@@ -169,7 +169,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     if ($signal) {
         $user_email = $_POST['email'];
-        $email_query = "SELECT * FROM VoterRegistration WHERE email = '$user_email'";
+        $email_query = "SELECT * FROM VoterRegistrationTable WHERE email = '$user_email'";
         $email_result = mysqli_query($link, $email_query);
 
         if ($email_result && mysqli_num_rows($email_result) > 0) {
@@ -177,16 +177,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $signal = false;
         }
     }
+
     if ($signal) {
         $target_dir = "uploads/";
         $target_file = $target_dir . basename($file["name"]);
         if (move_uploaded_file($file['tmp_name'], $target_file)) {
             $address = mysqli_real_escape_string($link, $_POST['address']);
-            $sql = "INSERT INTO VoterRegistration (first_name, last_name, email, mobile_number, birth_date, gender, gv_proof, address, state, city, postal_code, file_path)
+            $sql = "INSERT INTO VoterRegistrationTable (first_name, last_name, email, mobile_number, birth_date, gender, gv_proof, address, state, city, postal_code, file_path)
                     VALUES ('$first_name', '$last_name', '$email', '$phone', '$birth_date', '$gender', '$gv_id', '$address', '$state', '$city', '$postal', '$target_file')";
             if (mysqli_query($link, $sql)) {
                 $successMessage = "Registration successful!";   
-                header("Location: admin_home.php?update_message=" . urlencode('New record added successfully'));
+                header("Location: " . ($_SESSION['username'] == 'root' ? 'admin_home.php?update_message=' . urlencode('New record added successfully') : '/Admin Panel/welcome.php'));
                 exit();
             } else {
                 $fileErr = "Failed to submit data to the database: " . mysqli_error($link);
@@ -194,10 +195,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $fileErr = "Sorry, there was an error uploading your file.";
         }
-    } else {
-        // If any error exists, redirect back with errors
-        header("Location:form.php?email_message=" . urlencode('Email already exists '));
-        exit();
+    } 
+    else{
+        header("form.php?email_message=".urlencode('Email is alredy exist use another email !!!'));
     }
 }
 
@@ -228,7 +228,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>Voter Registration Form</h1>
             <div class="input-box">
                 <label>First Name</label>
-                <input type="text" placeholder="Enter first name" id="first-name" name="first-name"  />
+                <input type="text" placeholder="Enter first name" id="first-name" name="first-name" value="<?php echo $signal=false?$name:"";?>"  />
                 <small id="first-name-error"></small>
                  <span class="error" style="color:red;"><?php echo $first_nameErr;?></span>
             </div>
@@ -243,9 +243,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="input-box">
                 <label>Email Address</label>
-                <input type="text" placeholder="Enter email address" name="email"  />
+                <input type="text" placeholder="Enter email address" name="email" id="email" />
                 <small id="email-error"></small>
                 <span class="error" style="color:red;"><?php echo  isset($_GET['email_message']) ?$_GET['email_message']:''; ?></span>
+                <span class="error" style="color:red;"><?php echo $emailErr;?></span>
             </div>
 
 
@@ -379,7 +380,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    <!--Add script file after validation
    and add required keyword in each field
    -->
-   
+   <script>
+$(document).ready(function() {
+    // When the email field loses focus, check if the email exists in the database
+    $('#email').blur(function() {
+        var email = $('#email').val();
+        if (email !== "") {
+            // Send AJAX request to check if the email exists
+            $.ajax({
+                url: 'check_email.php', // PHP script to check email
+                type: 'POST',
+                data: { email: email },
+                success: function(response) {
+                    if (response === 'exists') {
+                        $('#emailError').show();  // Show error message
+                        $('#email').focus();  // Focus back on email field
+                    } else {
+                        $('#emailError').hide();  // Hide error message if email doesn't exist
+                    }
+                }
+            });
+        }
+    });
+});
+</script>
    
 </body>
 

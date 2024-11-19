@@ -1,25 +1,45 @@
 <?php
-include("header.php");
-include("connection.php");
+$host = 'localhost'; 
+$username = 'root'; 
+$password = 'root';
+$dbname = 'Admin_Panel'; 
 
+$link = mysqli_connect($host, $username, $password, $dbname);
+
+if (!$link) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+?>
+
+
+<?php
+//include("connection.php");
 session_start();
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-//echo $_SESSION['user_id'].'';
-if (isset($_GET["id"])) {
-    $id = $_GET['id'];
-    $_SESSION['id'] = $id;
-    $userid=$_SESSION['user_id'];
-    // Fetch data from the database
-    $query = "SELECT * FROM VoterRegistrationTable   WHERE `id` = '$id'";
+if (isset($_SESSION['login_id'])) {
+    $login_id = $_SESSION['login_id'];  
+
+    
+    $query = "SELECT * FROM VoterRegistrationTable WHERE id = '$login_id'";  // Use session login_id
+
+    
     $result = mysqli_query($link, $query);
 
+    
     if (!$result) {
-        die("Connection failed");
+        die("Connection failed: " . mysqli_error($link));
     } else {
+
         $row = mysqli_fetch_assoc($result);
-        $_SESSION['email'] = $row['email']; // Store the email in session for reference if needed
-        //echo $_SESSION['email'].'';
+
     }
+} else {
+    
+    echo "No session found. Please log in again.";
+    header("Location:session.php");
+    exit;
 }
 ?>
 
@@ -252,5 +272,3 @@ if (isset($_GET["id"])) {
     </div>
 </body>
 </html>
-
-<?php include("footer.php"); ?>

@@ -6,7 +6,7 @@ if (isset($_GET["id"])) {
     $id = $_GET['id'];
 
     $_SESSION['id']= $id;
-    $query = "select * from VoterRegistration where `id`='$id'";
+    $query = "select * from VoterRegistrationTable where `id`='$id'";
 
     $result = mysqli_query($link, $query);
 
@@ -55,7 +55,7 @@ if (isset($_POST['submit'])) {
     }
 
     // Update query
-    $query = "UPDATE VoterRegistration SET 
+    $query = "UPDATE VoterRegistrationTable  SET 
                 first_name='$first_name', 
                 last_name='$last_name', 
                 email='$email', 

@@ -1,19 +1,19 @@
 <?php
+session_start();  // Make sure session_start() is called at the top of the script
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-session_start();
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Connect to the database
-    $dbconnect = mysqli_connect("localhost", "root", "root", "WA_training_Oct_2024");
+    $dbconnect = mysqli_connect("localhost", "root", "root", "Admin_Panel");
 
     if ($dbconnect->connect_error) {
         die("Connection failed: " . $dbconnect->connect_error);
     }
 
-
+    // Sanitize the inputs
     $email = mysqli_real_escape_string($dbconnect, trim($_POST['email']));
     $password = mysqli_real_escape_string($dbconnect, trim($_POST['password']));
 
@@ -23,38 +23,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else if (empty($password)) {
         $error = "<p>Password cannot be blank</p>";
     } 
-    else if(strlen($password) <=8) 
-    {
-        $error = "Password Must Contain At Least 8 Characters!";
-    }
-    
-    else {
+    else if(strlen($password) <= 8) {
+        $error = "Password must contain at least 8 characters!";
+    } else {
         // Check if the email already exists in the database
-        $query = "SELECT id FROM username_password WHERE email='$email'";
+        $query = "SELECT id FROM login_table WHERE email='$email'";
         $result = mysqli_query($dbconnect, $query);
 
         if (mysqli_num_rows($result) > 0) {
             $error = "<p>The email address is already registered.</p>";
         } else {
             // Hash the password before storing it
-             $secure_pass = password_hash($password, PASSWORD_DEFAULT);
-            echo "password hash value".$secure_pass;
+            $secure_pass = password_hash($password, PASSWORD_DEFAULT);
             // Insert new user into the database
-            $query = "INSERT INTO username_password (email, password) VALUES ('$email', '$secure_pass')";
+            $query = "INSERT INTO login_table (email, password) VALUES ('$email', '$secure_pass')";
             if (mysqli_query($dbconnect, $query)) {
-                $_SESSION['email'] = $email;
-                // $_SESSION['password'] = $secure_pass;
-                header('Location: session.php'); // Redirect to session page
+
+                // Get the user ID for the session
+                $id_query = "SELECT id FROM login_table WHERE email='$email'";
+                $id_result = mysqli_query($dbconnect, $id_query);
+                if ($id_result && mysqli_num_rows($id_result) > 0) {
+                    $row_id = mysqli_fetch_assoc($id_result);
+                    $login_id = $row_id["id"];
+                    $_SESSION['login_id'] = $login_id; // Set the session variable
+
+                    // Debugging: Check if session variable is set correctly
+                    echo "Session login_id: " . $_SESSION['login_id'];  // You can remove this after testing
+
+                    // Redirect to session page
+                    header('Location: session.php?login_id=' . urlencode($login_id)); // Redirect to session page
+                    exit;  // Make sure to exit to stop further script execution
+                } else {
+                    $error = "<p>Could not retrieve user ID.</p>";
+                }
             } else {
-                $error = "<p>Error during sign-up. Plealse try again later.</p>";
+                $error = "<p>Error during sign-up. Please try again later.</p>";
             }
         }
     }
 
-
     mysqli_close($dbconnect);
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

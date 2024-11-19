@@ -16,7 +16,7 @@ include("header.php");
     <h2 class="text mx-3">All Records  <?php
 
     include("connection.php");
-    $query="select count(*) as total_records from VoterRegistration";
+    $query="select count(*) as total_records from VoterRegistrationTable";
     $result=mysqli_query($link,$query);
     if(!$result){
         die("connection failed");
@@ -50,7 +50,7 @@ include("header.php");
         <tbody>
             <?php
             include("connection.php");
-            $query = "SELECT * FROM VoterRegistration ORDER BY id DESC";
+            $query = "SELECT * FROM VoterRegistrationTable  ORDER BY id DESC";
             $result = mysqli_query($link, $query);
             if (!$result) {
                 die("Connection failed: " . mysqli_error($link));
@@ -72,7 +72,7 @@ include("header.php");
                     <td><?php echo $row['gender']; ?></td>
                     <td><a href="update.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-success">Update</a></td>
                     <td><a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<?php echo $row['id']; ?>">Delete</a></td>
-                    <td><a href="view.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-primary">view</a></td>
+                    <td><a href="view.php?id=<?php echo urlencode($row['id']); $_SESSION['user_id']=$row['id'];?>" class="btn btn-primary">view</a></td>
                 </tr>
             <?php
             }

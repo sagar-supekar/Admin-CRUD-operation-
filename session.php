@@ -1,15 +1,16 @@
 <?php
+session_start();  
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-session_start();  
+
 
 if (array_key_exists('email', $_POST) || array_key_exists('password', $_POST)) {
     $error = "";
     $success = "";
 
    
-    $dbconnect = mysqli_connect("localhost", "root", "root", "WA_training_Oct_2024");
-
+    $dbconnect = mysqli_connect("localhost", "root", "root", "Admin_Panel");
+    print_r($dbconnect);
     
     if ($dbconnect->connect_error) {
         die("Connection failed: " . $dbconnect->connect_error);
@@ -29,20 +30,24 @@ if (array_key_exists('email', $_POST) || array_key_exists('password', $_POST)) {
     else
     {
               
-        $query = "SELECT * FROM username_password WHERE email='$username'";
+        $query = "SELECT * FROM login_table WHERE email='$username'";
         $result = mysqli_query($dbconnect, $query);
         if (mysqli_num_rows($result) > 0) {
   
         //fetch password
         $row = mysqli_fetch_assoc($result);
         $hash_password = $row["password"];
-
+        $_SESSION['login_id']= $row['id'];
         // Verify the password
         if (password_verify($password, $hash_password)) {
             $success = "<p>Login successful</p>";
-            $_SESSION['username'] = $username; // Store the email in the session
-            print_r($_SESSION['username']);
-            header("Location: welcome.php"); 
+            $_SESSION['username'] = $username; 
+           // $_SESSION['login_id']= $_SESSION['login_id'];
+            // Store the email in the session
+            //print_r($_SESSION['username']);
+            
+            header("Location: welcome.php?login_id=" . $_SESSION['login_id']);
+           // header('Location: welcome.php?login_id=' . urlencode($login_id));
             exit();
         } else {
             // Incorrect password
@@ -148,7 +153,7 @@ if (array_key_exists('email', $_POST) || array_key_exists('password', $_POST)) {
                 </div>
 
                 <div class="d-flex justify-content-between mb-3 mx-2">
-                    <a href="/redirect of pages sign up to sig in/adding_form_data_in _db.php">New user? Register</a>
+                    <a href="/Admin Panel/adding_form_data_in _db.php">New user? Register</a>
                     <a href="/">Forgot Password?</a>
                 </div>
 
